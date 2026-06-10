@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>多音字大冒險｜國小低年級多音字學習</title>
+<!-- 後備楷體（平板／手機沒有「標楷體」時使用，可自行刪除這三行改用純本機字體） -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg1:#fff7e6; --bg2:#e6f7ff; --pink:#ff8fab; --yellow:#ffd56b;
+    --green:#7ad07a; --blue:#6ec6ff; --purple:#c89bf0; --orange:#ffab73;
+    --ink:#3a3a4a; --soft:#fff;
+    --kai:"標楷體","DFKai-SB","BiauKai","TW-Kai","LXGW WenKai TC","Kaiti TC","KaiTi","Kaiti SC","楷體",serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  button,input,select,textarea{font-family:inherit;}
+  body{
+    font-family:var(--kai);
+    background:linear-gradient(135deg,var(--bg1),var(--bg2));
+    color:var(--ink);
+    min-height:100vh;
+    -webkit-text-size-adjust:100%;
+  }
+  /* 注音 ruby */
+  ruby{ruby-position:over;}
+  rt{
+    font-size:0.5em;
+    color:#d6336c;
+    font-weight:700;
+    letter-spacing:-0.02em;
+  }
+  rt.q{color:#1c7ed6;}
+  rt.rv{color:#2f9e44;font-weight:900;}
+  .wrap{max-width:960px;margin:0 auto;padding:14px 12px 60px;}
+  header h1{
+    text-align:center;
+    font-size:clamp(26px,6vw,42px);
+    margin:10px 0 4px;
+    color:#e8420c;
+    text-shadow:1px 1px 0 #fff, 2px 2px 0 rgba(0,0,0,.15);
+  }
+  header p.sub{
+    text-align:center;margin:0 0 12px;font-size:clamp(14px,3.5vw,18px);color:#5c6066;
+  }
+  /* 分頁按鈕 */
+  .tabs{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(92px,1fr));gap:8px;margin-bottom:16px;
+  }
+  .tab{
+    border:none;border-radius:18px;padding:14px 4px;cursor:pointer;
+    font-size:clamp(16px,4vw,22px);font-weight:900;color:#fff;
+    box-shadow:0 4px 0 rgba(0,0,0,.18);transition:transform .08s;
+    line-height:1.1;
+    text-shadow:0 1px 1px rgba(0,0,0,.45),0 0 2px rgba(0,0,0,.35);
+  }
+  .tab ruby rt{color:#fff;opacity:1;text-shadow:0 1px 1px rgba(0,0,0,.45);}
+  .tab:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(0,0,0,.12);}
+  .tab.t0{background:#f7559a;} .tab.t1{background:#2b9be6;}
+  .tab.t2{background:#41b35b;} .tab.t3{background:#ef7d12;}
+  .tab.t4{background:#9163e0;}
+  .tab.off{opacity:.55;filter:saturate(.7);}
+  section{display:none;}
+  section.active{display:block;animation:fade .25s;}
+  @keyframes fade{from{opacity:0;transform:translateY(6px);}to{opacity:1;}}
+  .panel{
+    background:var(--soft);border-radius:22px;padding:16px;
+    box-shadow:0 6px 18px rgba(0,0,0,.08);
+  }
+  h2.title{
+    text-align:center;font-size:clamp(20px,5vw,28px);margin:4px 0 14px;color:#1971c2;
+  }
+  /* 字卡 */
+  .cardgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;}
+  .card{
+    background:linear-gradient(160deg,#fffef9,#fff4e0);
+    border:3px solid #ffe3a3;border-radius:20px;padding:12px;text-align:center;
+    box-shadow:0 4px 10px rgba(0,0,0,.06);
+  }
+  .bigchar{font-size:clamp(48px,14vw,70px);font-weight:900;color:#e8590c;line-height:1;margin:4px 0 8px;}
+  .rbtn{
+    display:block;width:100%;margin:6px 0;border:none;border-radius:14px;
+    background:#ffd56b;color:#5c3b00;font-size:clamp(18px,5vw,24px);font-weight:800;
+    padding:8px;cursor:pointer;box-shadow:0 3px 0 #e0a92e;
+  }
+  .rbtn:active{transform:translateY(2px);box-shadow:0 1px 0 #e0a92e;}
+  .detail{display:none;margin-top:6px;text-align:left;background:#fff;border-radius:12px;padding:8px 10px;border:2px dashed #ffd56b;}
+  .detail.show{display:block;}
+  .detail .mean{font-size:clamp(15px,4vw,18px);margin:2px 0 8px;color:#444;}
+  .chip{
+    display:inline-block;background:#e7f5ff;border:2px solid #a5d8ff;border-radius:12px;
+    padding:4px 10px;margin:4px 4px 0 0;font-size:clamp(18px,5vw,24px);
+    white-space:nowrap;vertical-align:top;
+  }
+  /* 通用大按鈕 */
+  .bigbtn{
+    border:none;border-radius:18px;padding:14px 22px;font-size:clamp(18px,4.5vw,22px);
+    font-weight:800;color:#fff;cursor:pointer;box-shadow:0 4px 0 rgba(0,0,0,.15);
+    margin:6px;background:var(--purple);
+  }
+  .bigbtn:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(0,0,0,.15);}
+  .bigbtn.green{background:var(--green);} .bigbtn.blue{background:var(--blue);}
+  .bigbtn.pink{background:var(--pink);} .bigbtn.orange{background:var(--orange);}
+  .center{text-align:center;}
+  /* 題目區 */
+  .qbox{background:#fffdf5;border:3px solid #ffe3a3;border-radius:18px;padding:18px;text-align:center;margin-bottom:14px;}
+  .qword{font-size:clamp(40px,12vw,64px);font-weight:900;line-height:1.4;margin:6px 0;}
+  .qword .target{ text-decoration:underline; text-decoration-color:#1c7ed6; text-decoration-thickness:4px; padding:0 2px;}
+  .qask{font-size:clamp(16px,4vw,20px);color:#555;}
+  .opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:12px;margin-top:6px;}
+  .opt{
+    border:none;border-radius:18px;padding:16px 8px;font-size:clamp(24px,6vw,34px);font-weight:900;
+    background:#fff;border:3px solid #74c0fc;color:#1864ab;cursor:pointer;box-shadow:0 4px 0 #a5d8ff;
+  }
+  .opt:active{transform:translateY(2px);box-shadow:0 2px 0 #a5d8ff;}
+  .opt.right{background:#b2f2bb;border-color:#40c057;color:#2b8a3e;}
+  .opt.wrong{background:#ffc9c9;border-color:#fa5252;color:#c92a2a;}
+  .opt:disabled{cursor:default;}
+  .feedback{font-size:clamp(20px,5vw,26px);font-weight:800;min-height:36px;margin:10px 0;}
+  .feedback.ok{color:#2f9e44;} .feedback.no{color:#e8590c;}
+  /* 配對 */
+  .matchwrap{display:flex;gap:clamp(22px,9vw,64px);justify-content:center;position:relative;}
+  .matchcol{flex:1;max-width:300px;}
+  #g2lines{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:1;}
+  #g2lines .matchline{stroke:#37b24d;stroke-width:6;stroke-linecap:round;}
+  #g2lines .matchline.wrong{stroke:#fa5252;stroke-width:5;stroke-dasharray:9 7;}
+  .mhead{text-align:center;font-weight:800;font-size:clamp(15px,4vw,18px);color:#666;margin-bottom:6px;}
+  .mbtn{
+    display:block;width:100%;margin:8px 0;border:none;border-radius:16px;padding:14px 6px;
+    font-size:clamp(22px,5vw,30px);font-weight:900;cursor:pointer;box-shadow:0 4px 0 rgba(0,0,0,.12);
+    position:relative;z-index:2;
+  }
+  .mbtn.y{background:#ffe066;color:#5c3b00;}
+  .mbtn.w{background:#d0bfff;color:#5f3dc4;}
+  .mbtn.sel{outline:4px solid #ff6b6b;}
+  .mbtn.done{background:#b2f2bb !important;color:#2b8a3e;box-shadow:0 4px 0 #69db7c;cursor:default;}
+  /* 考試設定 */
+  .examopt{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:10px 0;}
+  .chooser{
+    border:3px solid #ffd56b;background:#fff;border-radius:16px;padding:12px 16px;
+    font-size:clamp(16px,4vw,20px);font-weight:800;cursor:pointer;color:#996600;
+  }
+  .chooser.on{background:#ffd56b;color:#5c3b00;}
+  .progress{text-align:center;font-size:clamp(16px,4vw,20px);font-weight:800;color:#1971c2;margin-bottom:8px;}
+  .result-big{font-size:clamp(30px,8vw,48px);font-weight:900;text-align:center;color:#e8590c;}
+  .wrongitem{background:#fff5f5;border:2px solid #ffc9c9;border-radius:14px;padding:10px 12px;margin:8px 0;}
+  .wrongitem .q{font-size:clamp(20px,5vw,26px);font-weight:800;}
+  .wrongitem .a{font-size:clamp(16px,4vw,20px);color:#2b8a3e;margin-top:4px;}
+  /* 自己寫寫看 */
+  .writechar{
+    font-size:clamp(48px,14vw,84px);font-weight:900;color:#7048e8;line-height:1;
+    text-align:center;background:linear-gradient(160deg,#f3f0ff,#e5dbff);
+    border:4px solid #d0bfff;border-radius:20px;padding:6px 0;margin:4px auto 10px;
+  }
+  .slotcard{
+    background:#fffdf7;border:3px solid #ffe3a3;border-radius:18px;padding:10px;margin:8px 0;
+  }
+  .slotcard .lab{font-weight:800;color:#e8590c;font-size:clamp(15px,4vw,18px);margin-bottom:6px;}
+  .zhubox{
+    min-height:54px;border:3px dashed #b197fc;border-radius:14px;background:#fff;
+    font-size:clamp(28px,7vw,38px);font-weight:900;color:#5f3dc4;text-align:center;
+    line-height:1.4;padding:6px 8px;cursor:pointer;letter-spacing:2px;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .zhubox.active{border-style:solid;border-color:#7048e8;background:#f3f0ff;box-shadow:0 0 0 4px #d0bfff;}
+  .zhubox .ph{font-size:clamp(14px,3.6vw,16px);color:#adb5bd;font-weight:600;letter-spacing:0;}
+  .wlab{margin-top:8px;font-size:clamp(14px,3.6vw,16px);color:#555;}
+  .winput{
+    width:100%;box-sizing:border-box;margin-top:4px;border:3px solid #a5d8ff;border-radius:12px;
+    padding:10px;font-size:clamp(22px,5.5vw,28px);text-align:center;font-family:inherit;
+  }
+  .keypad{margin-top:10px;}
+  .keypad .kphint{text-align:center;color:#666;font-size:15px;margin-bottom:6px;}
+  .keys{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;}
+  @media(max-width:480px){.keys{grid-template-columns:repeat(6,1fr);}}
+  .key{
+    border:none;border-radius:12px;background:#e7f5ff;color:#1864ab;border:2px solid #a5d8ff;
+    font-size:clamp(20px,5.5vw,26px);font-weight:800;padding:10px 0;cursor:pointer;
+    box-shadow:0 3px 0 #cfe8ff;
+  }
+  .key:active{transform:translateY(2px);box-shadow:0 1px 0 #cfe8ff;}
+  .key.tone{background:#fff3bf;border-color:#ffe066;color:#a37200;box-shadow:0 3px 0 #ffe9a8;}
+  .key.fn{background:#ffe3e3;border-color:#ffc9c9;color:#c92a2a;box-shadow:0 3px 0 #ffd6d6;font-size:18px;}
+  .answerbox{margin-top:14px;background:#ebfbee;border:3px solid #b2f2bb;border-radius:16px;padding:12px;display:none;}
+  .answerbox.show{display:block;}
+  .answerbox h3{margin:4px 0 8px;color:#2b8a3e;text-align:center;font-size:clamp(17px,4.5vw,20px);}
+  .ansrow{background:#fff;border:2px solid #d3f9d8;border-radius:12px;padding:8px 10px;margin:6px 0;}
+  .ansrow .yin{font-size:clamp(26px,6vw,32px);font-weight:900;color:#d6336c;}
+  .ansrow .yin .tick{color:#2f9e44;font-size:0.8em;}
+  /* 注音／造詞共用的作答框 */
+  .frow{display:flex;align-items:center;gap:8px;margin-top:8px;}
+  .flab{flex:none;width:3em;text-align:center;font-weight:800;color:#5c3b00;font-size:16px;
+    background:#ffe066;border-radius:10px;padding:8px 0;}
+  .ibox{flex:1;min-height:50px;border:3px dashed #b197fc;border-radius:14px;background:#fff;
+    font-size:clamp(26px,6.5vw,34px);font-weight:900;color:#5f3dc4;text-align:center;line-height:1.3;
+    padding:6px 8px;cursor:pointer;letter-spacing:2px;display:flex;align-items:center;justify-content:center;}
+  .ibox.active{border-style:solid;border-color:#7048e8;background:#f3f0ff;box-shadow:0 0 0 4px #d0bfff;}
+  .ibox .ph{font-size:clamp(13px,3.4vw,15px);color:#adb5bd;font-weight:600;letter-spacing:0;}
+  /* 造詞字盤的國字鍵 */
+  .key.tile{background:#fff4e0;border-color:#ffd56b;color:#5c3b00;box-shadow:0 2px 0 #ffe9a8;
+    font-size:clamp(22px,6vw,30px);padding:6px 0;}
+  .key.tile rt{color:#d6336c;}
+  /* 螢幕鍵盤會插進目前作答的框下方 */
+  .kpslot:empty{display:none;}
+  .kpslot #g5kp{margin-top:8px;}
+  /* 考題鍵盤：按鍵小一點，打字時上面的字還看得到 */
+  #g5kp .keys{gap:5px;}
+  #g5kp .key{padding:6px 0;font-size:clamp(15px,4.4vw,21px);box-shadow:0 2px 0 #cfe8ff;}
+  #g5kp .key.fn{font-size:13px;}
+  #g5kp .key.tile{font-size:clamp(19px,5.2vw,25px);padding:5px 0;}
+  .kphint .kpchar{display:inline-block;background:#ede7ff;border:2px solid #b197fc;border-radius:8px;
+    color:#5f3dc4;font-weight:900;font-size:22px;padding:0 10px;margin-right:8px;vertical-align:middle;}
+  footer{
+    margin-top:24px;text-align:center;font-size:13px;color:#868e96;line-height:1.6;padding:0 6px;
+  }
+  .star{font-size:22px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>🦄 多音字大冒險 🌈</h1>
+    <p class="sub">🔍 探索多音字的祕密，一起成為「多音字小達人」！</p>
+  </header>
+
+  <div class="tabs" id="tabs"></div>
+
+  <!-- 1 字卡瀏覽 -->
+  <section id="sec0" class="active">
+    <div class="panel">
+      <h2 class="title" id="title0"></h2>
+      <p class="center" id="hint0" style="color:#666;font-size:16px;margin-top:-6px;"></p>
+      <div class="cardgrid" id="cardgrid"></div>
+    </div>
+  </section>
+
+  <!-- 2 選讀音 -->
+  <section id="sec1">
+    <div class="panel">
+      <h2 class="title" id="title1"></h2>
+      <div class="qbox">
+        <div id="g1ask" style="font-size:18px;color:#555;"></div>
+        <div class="qword" id="g1word"></div>
+      </div>
+      <div class="opts" id="g1opts"></div>
+      <div class="feedback center" id="g1fb"></div>
+      <div class="center"><button class="bigbtn green" id="g1next"></button></div>
+    </div>
+  </section>
+
+  <!-- 3 造詞配對 -->
+  <section id="sec2">
+    <div class="panel">
+      <h2 class="title" id="title2"></h2>
+      <p class="center" id="g2ask" style="color:#555;font-size:18px;margin-top:-6px;"></p>
+      <div class="matchwrap">
+        <div class="matchcol"><div class="mhead" id="g2lh"></div><div id="g2left"></div></div>
+        <div class="matchcol"><div class="mhead" id="g2rh"></div><div id="g2right"></div></div>
+        <svg id="g2lines"></svg>
+      </div>
+      <div class="feedback center" id="g2fb"></div>
+      <div class="center"><button class="bigbtn orange" id="g2new"></button></div>
+    </div>
+  </section>
+
+  <!-- 4 考題（出字 → 寫讀音 + 造詞） -->
+  <section id="sec4">
+    <div class="panel">
+      <h2 class="title" id="title4"></h2>
+      <p class="center" id="g5tip" style="color:#555;font-size:16px;margin-top:-6px;"></p>
+      <div class="writechar" id="g5char"></div>
+      <div id="g5slots"></div>
+      <!-- 注音鍵盤：會自動移到你正在寫的那個讀音底下 -->
+      <div class="keypad" id="g5kp">
+        <div class="kphint" id="g5kphint">👇 點注音，拼出這個讀音（打的字會出現在上面的框框）</div>
+        <div class="keys" id="g5keys"></div>
+      </div>
+      <div class="center" style="margin-top:10px;">
+        <button class="bigbtn green" id="g5check"></button>
+        <button class="bigbtn blue" id="g5new"></button>
+      </div>
+      <div class="feedback center" id="g5fb"></div>
+      <div class="answerbox" id="g5ans"></div>
+    </div>
+  </section>
+
+  <footer>
+    讀音與釋義以教育部「重編國語辭典修訂本」為準，課本範圍以南一版為準，使用前請老師校對。<br>
+    ※部分字詞依低年級常見字選入，請老師對照南一版課本確認。
+  </footer>
+</div>
+
+<script>
+/* =========================================================
+   多音字資料
+   readings: 每個讀音 -> { yin:注音, mean:白話解釋, words:[ 詞 ] }
+   詞 word 格式：[[字,注音],[字,注音]...]（每個字都帶注音）
+   ========================================================= */
+const DATA = [
+  {char:'長', readings:[
+    {yin:'ㄔㄤˊ', mean:'距離大、不短。', words:[[['長','ㄔㄤˊ'],['短','ㄉㄨㄢˇ']],[['長','ㄔㄤˊ'],['頸','ㄐㄧㄥˇ'],['鹿','ㄌㄨˋ']]]},
+    {yin:'ㄓㄤˇ', mean:'年紀大、長大，或當頭的人。', words:[[['長','ㄓㄤˇ'],['大','ㄉㄚˋ']],[['校','ㄒㄧㄠˋ'],['長','ㄓㄤˇ']]]},
+  ]},
+  {char:'行', readings:[
+    {yin:'ㄒㄧㄥˊ', mean:'走路，或表示「可以」。', words:[[['行','ㄒㄧㄥˊ'],['人','ㄖㄣˊ']],[['不','ㄅㄨˋ'],['行','ㄒㄧㄥˊ']]]},
+    {yin:'ㄏㄤˊ', mean:'一行一行，或做買賣的店。', words:[[['銀','ㄧㄣˊ'],['行','ㄏㄤˊ']],[['一','ㄧˋ'],['行','ㄏㄤˊ']]]},
+    {yin:'ㄒㄧㄥˋ', mean:'一個人的行為、品行。', words:[[['品','ㄆㄧㄣˇ'],['行','ㄒㄧㄥˋ']],[['德','ㄉㄜˊ'],['行','ㄒㄧㄥˋ']]]},
+  ]},
+  {char:'了', readings:[
+    {yin:'˙ㄌㄜ', mean:'放在句子後面，表示做完了。', words:[[['好','ㄏㄠˇ'],['了','˙ㄌㄜ']],[['來','ㄌㄞˊ'],['了','˙ㄌㄜ']]]},
+    {yin:'ㄌㄧㄠˇ', mean:'明白、清楚。', words:[[['了','ㄌㄧㄠˇ'],['解','ㄐㄧㄝˇ']]]},
+  ]},
+  {char:'好', readings:[
+    {yin:'ㄏㄠˇ', mean:'很棒、不壞。', words:[[['好','ㄏㄠˇ'],['人','ㄖㄣˊ']],[['你','ㄋㄧˇ'],['好','ㄏㄠˇ']]]},
+    {yin:'ㄏㄠˋ', mean:'喜歡。', words:[[['愛','ㄞˋ'],['好','ㄏㄠˋ']],[['好','ㄏㄠˋ'],['奇','ㄑㄧˊ']]]},
+  ]},
+  {char:'得', readings:[
+    {yin:'ㄉㄜˊ', mean:'得到、拿到。', words:[[['得','ㄉㄜˊ'],['到','ㄉㄠˋ']],[['得','ㄉㄜˊ'],['獎','ㄐㄧㄤˇ']]]},
+    {yin:'ㄉㄟˇ', mean:'必須、一定要。', words:[[['得','ㄉㄟˇ'],['要','ㄧㄠˋ']]]},
+    {yin:'˙ㄉㄜ', mean:'放在動作後面，說明做得怎樣。', words:[[['跑','ㄆㄠˇ'],['得','˙ㄉㄜ'],['快','ㄎㄨㄞˋ']]]},
+  ]},
+  {char:'地', readings:[
+    {yin:'ㄉㄧˋ', mean:'土地、地方。', words:[[['土','ㄊㄨˇ'],['地','ㄉㄧˋ']],[['地','ㄉㄧˋ'],['方','ㄈㄤ']]]},
+    {yin:'˙ㄉㄜ', mean:'放在語詞後面，幫忙說明動作。', words:[[['慢','ㄇㄢˋ'],['慢','ㄇㄢˋ'],['地','˙ㄉㄜ']]]},
+  ]},
+  {char:'的', readings:[
+    {yin:'˙ㄉㄜ', mean:'表示「誰的、什麼的」。', words:[[['我','ㄨㄛˇ'],['的','˙ㄉㄜ']],[['好','ㄏㄠˇ'],['的','˙ㄉㄜ']]]},
+    {yin:'ㄉㄧˋ', mean:'目標。', words:[[['目','ㄇㄨˋ'],['的','ㄉㄧˋ']]]},
+    {yin:'ㄉㄧˊ', mean:'的確，真的、確實。', words:[[['的','ㄉㄧˊ'],['確','ㄑㄩㄝˋ']]]},
+  ]},
+  {char:'和', readings:[
+    {yin:'ㄏㄜˊ', mean:'平靜、合在一起。', words:[[['和','ㄏㄜˊ'],['好','ㄏㄠˇ']],[['和','ㄏㄜˊ'],['平','ㄆㄧㄥˊ']]]},
+    {yin:'ㄏㄢˋ', mean:'跟、與（表示在一起）。', words:[[['你','ㄋㄧˇ'],['和','ㄏㄢˋ'],['我','ㄨㄛˇ']]]},
+    {yin:'˙ㄏㄨㄛ', mean:'暖和，溫暖舒服。', words:[[['暖','ㄋㄨㄢˇ'],['和','˙ㄏㄨㄛ']]]},
+    {yin:'ㄏㄨㄛˋ', mean:'加水攪拌。', words:[[['和','ㄏㄨㄛˋ'],['麵','ㄇㄧㄢˋ']]]},
+    {yin:'ㄏㄜˋ', mean:'跟著別人一起唱或說。', words:[[['附','ㄈㄨˋ'],['和','ㄏㄜˋ']],[['唱','ㄔㄤˋ'],['和','ㄏㄜˋ']]]},
+  ]},
+  {char:'為', readings:[
+    {yin:'ㄨㄟˋ', mean:'因為、為了某件事。', words:[[['因','ㄧㄣ'],['為','ㄨㄟˋ']],[['為','ㄨㄟˋ'],['了','˙ㄌㄜ']]]},
+    {yin:'ㄨㄟˊ', mean:'做、當作。', words:[[['以','ㄧˇ'],['為','ㄨㄟˊ']],[['行','ㄒㄧㄥˊ'],['為','ㄨㄟˊ']]]},
+  ]},
+  {char:'著', readings:[
+    {yin:'˙ㄓㄜ', mean:'表示正在進行。', words:[[['看','ㄎㄢˋ'],['著','˙ㄓㄜ']],[['笑','ㄒㄧㄠˋ'],['著','˙ㄓㄜ']]]},
+    {yin:'ㄓㄠˊ', mean:'碰到、感覺到。', words:[[['著','ㄓㄠˊ'],['急','ㄐㄧˊ']],[['睡','ㄕㄨㄟˋ'],['著','ㄓㄠˊ']]]},
+    {yin:'ㄓㄨㄛˊ', mean:'寫文章；明顯。', words:[[['著','ㄓㄨㄛˊ'],['作','ㄗㄨㄛˋ']],[['顯','ㄒㄧㄢˇ'],['著','ㄓㄨㄛˊ']]]},
+  ]},
+  {char:'樂', readings:[
+    {yin:'ㄌㄜˋ', mean:'快樂、高興。', words:[[['快','ㄎㄨㄞˋ'],['樂','ㄌㄜˋ']],[['樂','ㄌㄜˋ'],['園','ㄩㄢˊ']]]},
+    {yin:'ㄩㄝˋ', mean:'音樂。', words:[[['音','ㄧㄣ'],['樂','ㄩㄝˋ']],[['樂','ㄩㄝˋ'],['器','ㄑㄧˋ']]]},
+    {yin:'ㄧㄠˋ', mean:'喜歡、愛好（智者樂水）。', words:[[['智','ㄓˋ'],['者','ㄓㄜˇ'],['樂','ㄧㄠˋ'],['水','ㄕㄨㄟˇ']]]},
+  ]},
+  {char:'大', readings:[
+    {yin:'ㄉㄚˋ', mean:'跟「小」相反。', words:[[['大','ㄉㄚˋ'],['小','ㄒㄧㄠˇ']],[['長','ㄓㄤˇ'],['大','ㄉㄚˋ']]]},
+    {yin:'ㄉㄞˋ', mean:'「大夫」就是醫生。', words:[[['大','ㄉㄞˋ'],['夫','ㄈㄨ']]]},
+  ]},
+  {char:'教', readings:[
+    {yin:'ㄐㄧㄠ', mean:'把會的東西告訴別人。', words:[[['教','ㄐㄧㄠ'],['書','ㄕㄨ']],[['教','ㄐㄧㄠ'],['我','ㄨㄛˇ']]]},
+    {yin:'ㄐㄧㄠˋ', mean:'跟教學有關的東西。', words:[[['教','ㄐㄧㄠˋ'],['室','ㄕˋ']],[['教','ㄐㄧㄠˋ'],['學','ㄒㄩㄝˊ']]]},
+  ]},
+  {char:'種', readings:[
+    {yin:'ㄓㄨㄥˇ', mean:'種子，或一種一種的。', words:[[['種','ㄓㄨㄥˇ'],['子','˙ㄗ']],[['一','ㄧˋ'],['種','ㄓㄨㄥˇ']]]},
+    {yin:'ㄓㄨㄥˋ', mean:'把種子放進土裡。', words:[[['種','ㄓㄨㄥˋ'],['樹','ㄕㄨˋ']],[['種','ㄓㄨㄥˋ'],['花','ㄏㄨㄚ']]]},
+  ]},
+  {char:'少', readings:[
+    {yin:'ㄕㄠˇ', mean:'不多。', words:[[['多','ㄉㄨㄛ'],['少','ㄕㄠˇ']],[['少','ㄕㄠˇ'],['少','ㄕㄠˇ']]]},
+    {yin:'ㄕㄠˋ', mean:'年紀輕。', words:[[['少','ㄕㄠˋ'],['年','ㄋㄧㄢˊ']]]},
+  ]},
+  {char:'中', readings:[
+    {yin:'ㄓㄨㄥ', mean:'裡面、中間。', words:[[['中','ㄓㄨㄥ'],['間','ㄐㄧㄢ']],[['中','ㄓㄨㄥ'],['午','ㄨˇ']]]},
+    {yin:'ㄓㄨㄥˋ', mean:'剛好打到、得到。', words:[[['中','ㄓㄨㄥˋ'],['獎','ㄐㄧㄤˇ']],[['打','ㄉㄚˇ'],['中','ㄓㄨㄥˋ']]]},
+  ]},
+  {char:'重', readings:[
+    {yin:'ㄓㄨㄥˋ', mean:'分量大，不輕。', words:[[['重','ㄓㄨㄥˋ'],['量','ㄌㄧㄤˋ']],[['很','ㄏㄣˇ'],['重','ㄓㄨㄥˋ']]]},
+    {yin:'ㄔㄨㄥˊ', mean:'再一次。', words:[[['重','ㄔㄨㄥˊ'],['來','ㄌㄞˊ']],[['重','ㄔㄨㄥˊ'],['新','ㄒㄧㄣ']]]},
+  ]},
+  {char:'空', readings:[
+    {yin:'ㄎㄨㄥ', mean:'天空，或裡面沒東西。', words:[[['天','ㄊㄧㄢ'],['空','ㄎㄨㄥ']],[['空','ㄎㄨㄥ'],['氣','ㄑㄧˋ']]]},
+    {yin:'ㄎㄨㄥˋ', mean:'有空、空的地方。', words:[[['有','ㄧㄡˇ'],['空','ㄎㄨㄥˋ']],[['空','ㄎㄨㄥˋ'],['地','ㄉㄧˋ']]]},
+  ]},
+  {char:'數', readings:[
+    {yin:'ㄕㄨˋ', mean:'數目、數字。', words:[[['數','ㄕㄨˋ'],['字','ㄗˋ']],[['數','ㄕㄨˋ'],['學','ㄒㄩㄝˊ']]]},
+    {yin:'ㄕㄨˇ', mean:'一個一個算。', words:[[['數','ㄕㄨˇ'],['一','ㄧ'],['數','ㄕㄨˇ']]]},
+    {yin:'ㄕㄨㄛˋ', mean:'屢次、好幾次（數見不鮮）。', words:[[['數','ㄕㄨㄛˋ'],['見','ㄐㄧㄢˋ'],['不','ㄅㄨˋ'],['鮮','ㄒㄧㄢ']]]},
+  ]},
+  {char:'漂', readings:[
+    {yin:'ㄆㄧㄠ', mean:'浮在水上。', words:[[['漂','ㄆㄧㄠ'],['浮','ㄈㄨˊ']],[['漂','ㄆㄧㄠ'],['流','ㄌㄧㄡˊ']]]},
+    {yin:'ㄆㄧㄠˋ', mean:'漂亮，很好看。', words:[[['漂','ㄆㄧㄠˋ'],['亮','ㄌㄧㄤˋ']]]},
+    {yin:'ㄆㄧㄠˇ', mean:'用水把東西洗白。', words:[[['漂','ㄆㄧㄠˇ'],['白','ㄅㄞˊ']]]},
+  ]},
+  {char:'幾', readings:[
+    {yin:'ㄐㄧˇ', mean:'問數目有多少。', words:[[['幾','ㄐㄧˇ'],['個','˙ㄍㄜ']],[['幾','ㄐㄧˇ'],['點','ㄉㄧㄢˇ']]]},
+    {yin:'ㄐㄧ', mean:'差一點、將近（幾乎）。', words:[[['幾','ㄐㄧ'],['乎','ㄏㄨ']]]},
+  ]},
+  {char:'還', readings:[
+    {yin:'ㄏㄞˊ', mean:'仍然、還有。', words:[[['還','ㄏㄞˊ'],['有','ㄧㄡˇ']],[['還','ㄏㄞˊ'],['是','ㄕˋ']]]},
+    {yin:'ㄏㄨㄢˊ', mean:'把東西還給別人。', words:[[['還','ㄏㄨㄢˊ'],['書','ㄕㄨ']],[['還','ㄏㄨㄢˊ'],['錢','ㄑㄧㄢˊ']]]},
+  ]},
+  {char:'正', readings:[
+    {yin:'ㄓㄥˋ', mean:'不歪、對的。', words:[[['正','ㄓㄥˋ'],['確','ㄑㄩㄝˋ']],[['正','ㄓㄥˋ'],['面','ㄇㄧㄢˋ']]]},
+    {yin:'ㄓㄥ', mean:'正月，就是農曆一月。', words:[[['正','ㄓㄥ'],['月','ㄩㄝˋ']]]},
+  ]},
+  {char:'看', readings:[
+    {yin:'ㄎㄢˋ', mean:'用眼睛看。', words:[[['看','ㄎㄢˋ'],['書','ㄕㄨ']],[['看','ㄎㄢˋ'],['見','ㄐㄧㄢˋ']]]},
+    {yin:'ㄎㄢ', mean:'照顧、守著。', words:[[['看','ㄎㄢ'],['守','ㄕㄡˇ']],[['看','ㄎㄢ'],['門','ㄇㄣˊ']]]},
+  ]},
+  {char:'處', readings:[
+    {yin:'ㄔㄨˇ', mean:'相處、辦理事情。', words:[[['相','ㄒㄧㄤ'],['處','ㄔㄨˇ']],[['處','ㄔㄨˇ'],['理','ㄌㄧˇ']]]},
+    {yin:'ㄔㄨˋ', mean:'地方。', words:[[['到','ㄉㄠˋ'],['處','ㄔㄨˋ']],[['好','ㄏㄠˇ'],['處','ㄔㄨˋ']]]},
+  ]},
+  {char:'倒', readings:[
+    {yin:'ㄉㄠˇ', mean:'跌下來、倒下去。', words:[[['跌','ㄉㄧㄝˊ'],['倒','ㄉㄠˇ']],[['倒','ㄉㄠˇ'],['下','ㄒㄧㄚˋ']]]},
+    {yin:'ㄉㄠˋ', mean:'反過來、把水倒出來。', words:[[['倒','ㄉㄠˋ'],['水','ㄕㄨㄟˇ']],[['倒','ㄉㄠˋ'],['車','ㄔㄜ']]]},
+  ]},
+  {char:'興', readings:[
+    {yin:'ㄒㄧㄥ', mean:'旺盛、興奮。', words:[[['興','ㄒㄧㄥ'],['奮','ㄈㄣˋ']]]},
+    {yin:'ㄒㄧㄥˋ', mean:'高興、有興趣。', words:[[['高','ㄍㄠ'],['興','ㄒㄧㄥˋ']],[['興','ㄒㄧㄥˋ'],['趣','ㄑㄩˋ']]]},
+  ]},
+  {char:'相', readings:[
+    {yin:'ㄒㄧㄤ', mean:'互相、彼此。', words:[[['互','ㄏㄨˋ'],['相','ㄒㄧㄤ']],[['相','ㄒㄧㄤ'],['同','ㄊㄨㄥˊ']]]},
+    {yin:'ㄒㄧㄤˋ', mean:'樣子、照片。', words:[[['相','ㄒㄧㄤˋ'],['片','ㄆㄧㄢˋ']],[['長','ㄓㄤˇ'],['相','ㄒㄧㄤˋ']]]},
+  ]},
+  {char:'當', readings:[
+    {yin:'ㄉㄤ', mean:'正在、擔任。', words:[[['當','ㄉㄤ'],['然','ㄖㄢˊ']],[['當','ㄉㄤ'],['心','ㄒㄧㄣ']]]},
+    {yin:'ㄉㄤˋ', mean:'適合、當作、上當。', words:[[['上','ㄕㄤˋ'],['當','ㄉㄤˋ']],[['當','ㄉㄤˋ'],['作','ㄗㄨㄛˋ']]]},
+  ]},
+  {char:'沒', readings:[
+    {yin:'ㄇㄟˊ', mean:'沒有、不曾。', words:[[['沒','ㄇㄟˊ'],['有','ㄧㄡˇ']],[['沒','ㄇㄟˊ'],['事','ㄕˋ']]]},
+    {yin:'ㄇㄛˋ', mean:'沉到水裡、不見了。', words:[[['沉','ㄔㄣˊ'],['沒','ㄇㄛˋ']],[['沒','ㄇㄛˋ'],['收','ㄕㄡ']]]},
+  ]},
+  {char:'分', readings:[
+    {yin:'ㄈㄣ', mean:'分開、分鐘。', words:[[['分','ㄈㄣ'],['開','ㄎㄞ']],[['分','ㄈㄣ'],['數','ㄕㄨˋ']]]},
+    {yin:'ㄈㄣˋ', mean:'一份，或本分。', words:[[['部','ㄅㄨˋ'],['分','ㄈㄣˋ']],[['身','ㄕㄣ'],['分','ㄈㄣˋ']]]},
+  ]},
+  {char:'覺', readings:[
+    {yin:'ㄐㄩㄝˊ', mean:'感覺、覺得。', words:[[['感','ㄍㄢˇ'],['覺','ㄐㄩㄝˊ']],[['覺','ㄐㄩㄝˊ'],['得','˙ㄉㄜ']]]},
+    {yin:'ㄐㄧㄠˋ', mean:'睡覺。', words:[[['睡','ㄕㄨㄟˋ'],['覺','ㄐㄧㄠˋ']],[['午','ㄨˇ'],['覺','ㄐㄧㄠˋ']]]},
+  ]},
+  {char:'更', readings:[
+    {yin:'ㄍㄥ', mean:'改變、重新。', words:[[['更','ㄍㄥ'],['新','ㄒㄧㄣ']],[['更','ㄍㄥ'],['改','ㄍㄞˇ']]]},
+    {yin:'ㄍㄥˋ', mean:'又、再加上（更多）。', words:[[['更','ㄍㄥˋ'],['多','ㄉㄨㄛ']],[['更','ㄍㄥˋ'],['好','ㄏㄠˇ']]]},
+  ]},
+  {char:'都', readings:[
+    {yin:'ㄉㄡ', mean:'全部、都是。', words:[[['都','ㄉㄡ'],['是','ㄕˋ']],[['都','ㄉㄡ'],['有','ㄧㄡˇ']]]},
+    {yin:'ㄉㄨ', mean:'大城市（首都）。', words:[[['首','ㄕㄡˇ'],['都','ㄉㄨ']],[['都','ㄉㄨ'],['市','ㄕˋ']]]},
+  ]},
+  {char:'不', readings:[
+    {yin:'ㄅㄨˋ', mean:'表示「沒有、不是」。', words:[[['不','ㄅㄨˋ'],['對','ㄉㄨㄟˋ']],[['不','ㄅㄨˋ'],['好','ㄏㄠˇ']]]},
+    {yin:'ㄅㄨˊ', mean:'後面接第四聲的字時，要改念第二聲（變調）。', words:[[['不','ㄅㄨˊ'],['是','ㄕˋ']],[['不','ㄅㄨˊ'],['要','ㄧㄠˋ']]]},
+  ]},
+  {char:'薄', readings:[
+    {yin:'ㄅㄠˊ', mean:'不厚（口語說法）。', words:[[['薄','ㄅㄠˊ'],['片','ㄆㄧㄢˋ']],[['薄','ㄅㄠˊ'],['餅','ㄅㄧㄥˇ']]]},
+    {yin:'ㄅㄛˊ', mean:'少、不濃厚。', words:[[['薄','ㄅㄛˊ'],['弱','ㄖㄨㄛˋ']]]},
+    {yin:'ㄅㄛˋ', mean:'薄荷，一種香香的植物。', words:[[['薄','ㄅㄛˋ'],['荷','ㄏㄜˊ']]]},
+  ]},
+  {char:'鮮', readings:[
+    {yin:'ㄒㄧㄢ', mean:'新鮮、鮮豔。', words:[[['新','ㄒㄧㄣ'],['鮮','ㄒㄧㄢ']],[['鮮','ㄒㄧㄢ'],['花','ㄏㄨㄚ']]]},
+    {yin:'ㄒㄧㄢˇ', mean:'很少。', words:[[['鮮','ㄒㄧㄢˇ'],['少','ㄕㄠˇ']]]},
+  ]},
+  {char:'溜', readings:[
+    {yin:'ㄌㄧㄡ', mean:'滑動、偷偷走掉。', words:[[['溜','ㄌㄧㄡ'],['冰','ㄅㄧㄥ']],[['溜','ㄌㄧㄡ'],['走','ㄗㄡˇ']]]},
+    {yin:'ㄌㄧㄡˋ', mean:'很快地（一溜煙）。', words:[[['一','ㄧˋ'],['溜','ㄌㄧㄡˋ'],['煙','ㄧㄢ']]]},
+  ]},
+  {char:'要', readings:[
+    {yin:'ㄧㄠˋ', mean:'想要、需要。', words:[[['重','ㄓㄨㄥˋ'],['要','ㄧㄠˋ']],[['需','ㄒㄩ'],['要','ㄧㄠˋ']]]},
+    {yin:'ㄧㄠ', mean:'要求，請別人做到。', words:[[['要','ㄧㄠ'],['求','ㄑㄧㄡˊ']]]},
+  ]},
+  {char:'累', readings:[
+    {yin:'ㄌㄟˋ', mean:'疲倦、辛苦。', words:[[['很','ㄏㄣˇ'],['累','ㄌㄟˋ']],[['勞','ㄌㄠˊ'],['累','ㄌㄟˋ']]]},
+    {yin:'ㄌㄟˇ', mean:'一層一層加上去。', words:[[['累','ㄌㄟˇ'],['積','ㄐㄧ']]]},
+    {yin:'ㄌㄟˊ', mean:'累贅，多餘的負擔。', words:[[['累','ㄌㄟˊ'],['贅','ㄓㄨㄟˋ']]]},
+  ]},
+  {char:'背', readings:[
+    {yin:'ㄅㄟˋ', mean:'身體後面，或把書記起來。', words:[[['背','ㄅㄟˋ'],['後','ㄏㄡˋ']],[['背','ㄅㄟˋ'],['書','ㄕㄨ']]]},
+    {yin:'ㄅㄟ', mean:'用背馱東西。', words:[[['背','ㄅㄟ'],['包','ㄅㄠ']]]},
+  ]},
+  {char:'答', readings:[
+    {yin:'ㄉㄚˊ', mean:'回答問題。', words:[[['答','ㄉㄚˊ'],['案','ㄢˋ']],[['回','ㄏㄨㄟˊ'],['答','ㄉㄚˊ']]]},
+    {yin:'ㄉㄚ', mean:'答應，說好。', words:[[['答','ㄉㄚ'],['應','ㄧㄥˋ']]]},
+  ]},
+  {char:'會', readings:[
+    {yin:'ㄏㄨㄟˋ', mean:'聚在一起，或能夠。', words:[[['開','ㄎㄞ'],['會','ㄏㄨㄟˋ']],[['學','ㄒㄩㄝˊ'],['會','ㄏㄨㄟˋ']]]},
+    {yin:'ㄎㄨㄞˋ', mean:'會計，管錢的工作。', words:[[['會','ㄎㄨㄞˋ'],['計','ㄐㄧˋ']]]},
+  ]},
+  {char:'曾', readings:[
+    {yin:'ㄘㄥˊ', mean:'曾經、以前有過。', words:[[['曾','ㄘㄥˊ'],['經','ㄐㄧㄥ']]]},
+    {yin:'ㄗㄥ', mean:'曾祖父，或當姓。', words:[[['曾','ㄗㄥ'],['祖','ㄗㄨˇ'],['父','ㄈㄨˋ']]]},
+  ]},
+  {char:'轉', readings:[
+    {yin:'ㄓㄨㄢˇ', mean:'改變方向。', words:[[['轉','ㄓㄨㄢˇ'],['彎','ㄨㄢ']],[['轉','ㄓㄨㄢˇ'],['身','ㄕㄣ']]]},
+    {yin:'ㄓㄨㄢˋ', mean:'繞圈圈轉動。', words:[[['打','ㄉㄚˇ'],['轉','ㄓㄨㄢˋ']],[['轉','ㄓㄨㄢˋ'],['圈','ㄑㄩㄢ']]]},
+  ]},
+  {char:'間', readings:[
+    {yin:'ㄐㄧㄢ', mean:'中間、房間。', words:[[['中','ㄓㄨㄥ'],['間','ㄐㄧㄢ']],[['房','ㄈㄤˊ'],['間','ㄐㄧㄢ']]]},
+    {yin:'ㄐㄧㄢˋ', mean:'隔開、空隙。', words:[[['間','ㄐㄧㄢˋ'],['斷','ㄉㄨㄢˋ']],[['間','ㄐㄧㄢˋ'],['隔','ㄍㄜˊ']]]},
+  ]},
+  {char:'傳', readings:[
+    {yin:'ㄔㄨㄢˊ', mean:'遞過去、流傳。', words:[[['傳','ㄔㄨㄢˊ'],['球','ㄑㄧㄡˊ']],[['傳','ㄔㄨㄢˊ'],['話','ㄏㄨㄚˋ']]]},
+    {yin:'ㄓㄨㄢˋ', mean:'記人故事的書。', words:[[['傳','ㄓㄨㄢˋ'],['記','ㄐㄧˋ']],[['自','ㄗˋ'],['傳','ㄓㄨㄢˋ']]]},
+  ]},
+  {char:'假', readings:[
+    {yin:'ㄐㄧㄚˇ', mean:'不是真的。', words:[[['真','ㄓㄣ'],['假','ㄐㄧㄚˇ']],[['假','ㄐㄧㄚˇ'],['裝','ㄓㄨㄤ']]]},
+    {yin:'ㄐㄧㄚˋ', mean:'休息的日子。', words:[[['放','ㄈㄤˋ'],['假','ㄐㄧㄚˋ']],[['假','ㄐㄧㄚˋ'],['日','ㄖˋ']]]},
+  ]},
+  {char:'便', readings:[
+    {yin:'ㄅㄧㄢˋ', mean:'方便、順利。', words:[[['方','ㄈㄤ'],['便','ㄅㄧㄢˋ']],[['便','ㄅㄧㄢˋ'],['利','ㄌㄧˋ']]]},
+    {yin:'ㄆㄧㄢˊ', mean:'便宜，價錢低。', words:[[['便','ㄆㄧㄢˊ'],['宜','ㄧˊ']]]},
+  ]},
+  {char:'吃', readings:[
+    {yin:'ㄔ', mean:'把食物放進嘴裡。', words:[[['吃','ㄔ'],['飯','ㄈㄢˋ']],[['好','ㄏㄠˇ'],['吃','ㄔ']]]},
+    {yin:'ㄐㄧˊ', mean:'口吃，說話結巴。', words:[[['口','ㄎㄡˇ'],['吃','ㄐㄧˊ']]]},
+  ]},
+  {char:'埋', readings:[
+    {yin:'ㄇㄞˊ', mean:'把東西蓋進土裡。', words:[[['埋','ㄇㄞˊ'],['藏','ㄘㄤˊ']],[['掩','ㄧㄢˇ'],['埋','ㄇㄞˊ']]]},
+    {yin:'ㄇㄢˊ', mean:'埋怨，責怪別人。', words:[[['埋','ㄇㄢˊ'],['怨','ㄩㄢˋ']]]},
+  ]},
+  {char:'奇', readings:[
+    {yin:'ㄑㄧˊ', mean:'特別、少見。', words:[[['奇','ㄑㄧˊ'],['怪','ㄍㄨㄞˋ']],[['神','ㄕㄣˊ'],['奇','ㄑㄧˊ']]]},
+    {yin:'ㄐㄧ', mean:'奇數，不成雙的數。', words:[[['奇','ㄐㄧ'],['數','ㄕㄨˋ']]]},
+  ]},
+  {char:'難', readings:[
+    {yin:'ㄋㄢˊ', mean:'不容易。', words:[[['困','ㄎㄨㄣˋ'],['難','ㄋㄢˊ']],[['難','ㄋㄢˊ'],['過','ㄍㄨㄛˋ']]]},
+    {yin:'ㄋㄢˋ', mean:'災難、不幸的事。', words:[[['災','ㄗㄞ'],['難','ㄋㄢˋ']],[['難','ㄋㄢˋ'],['民','ㄇㄧㄣˊ']]]},
+  ]},
+  {char:'角', readings:[
+    {yin:'ㄐㄧㄠˇ', mean:'角落，或動物頭上的角。', words:[[['牛','ㄋㄧㄡˊ'],['角','ㄐㄧㄠˇ']],[['角','ㄐㄧㄠˇ'],['落','ㄌㄨㄛˋ']]]},
+    {yin:'ㄐㄩㄝˊ', mean:'角色，戲裡的人物。', words:[[['角','ㄐㄩㄝˊ'],['色','ㄙㄜˋ']],[['主','ㄓㄨˇ'],['角','ㄐㄩㄝˊ']]]},
+  ]},
+  {char:'校', readings:[
+    {yin:'ㄒㄧㄠˋ', mean:'學校。', words:[[['學','ㄒㄩㄝˊ'],['校','ㄒㄧㄠˋ']],[['校','ㄒㄧㄠˋ'],['長','ㄓㄤˇ']]]},
+    {yin:'ㄐㄧㄠˋ', mean:'校稿，檢查改正文章。', words:[[['校','ㄐㄧㄠˋ'],['稿','ㄍㄠˇ']]]},
+  ]},
+  {char:'彈', readings:[
+    {yin:'ㄊㄢˊ', mean:'用手指撥動、跳起來。', words:[[['彈','ㄊㄢˊ'],['琴','ㄑㄧㄣˊ']],[['彈','ㄊㄢˊ'],['跳','ㄊㄧㄠˋ']]]},
+    {yin:'ㄉㄢˋ', mean:'子彈、炮彈。', words:[[['子','ㄗˇ'],['彈','ㄉㄢˋ']],[['炸','ㄓㄚˋ'],['彈','ㄉㄢˋ']]]},
+  ]},
+  {char:'從', readings:[
+    {yin:'ㄘㄨㄥˊ', mean:'跟著、自從。', words:[[['從','ㄘㄨㄥˊ'],['前','ㄑㄧㄢˊ']],[['跟','ㄍㄣ'],['從','ㄘㄨㄥˊ']]]},
+    {yin:'ㄘㄨㄥ', mean:'從容，不慌不忙的樣子。', words:[[['從','ㄘㄨㄥ'],['容','ㄖㄨㄥˊ']]]},
+    {yin:'ㄗㄨㄥˋ', mean:'跟在身邊的人（侍從）。', words:[[['侍','ㄕˋ'],['從','ㄗㄨㄥˋ']]]},
+  ]},
+  {char:'差', readings:[
+    {yin:'ㄔㄚˋ', mean:'不夠好、不一樣。', words:[[['差','ㄔㄚˋ'],['不','ㄅㄨˋ'],['多','ㄉㄨㄛ']],[['差','ㄔㄚˋ'],['勁','ㄐㄧㄣˋ']]]},
+    {yin:'ㄔㄚ', mean:'不同、缺少。', words:[[['差','ㄔㄚ'],['別','ㄅㄧㄝˊ']],[['差','ㄔㄚ'],['距','ㄐㄩˋ']]]},
+    {yin:'ㄔㄞ', mean:'出差，被派去辦事。', words:[[['出','ㄔㄨ'],['差','ㄔㄞ']]]},
+    {yin:'ㄘ', mean:'參差，長短高低不整齊。', words:[[['參','ㄘㄣ'],['差','ㄘ']]]},
+  ]},
+  {char:'比', readings:[
+    {yin:'ㄅㄧˇ', mean:'比較、互相較量。', words:[[['比','ㄅㄧˇ'],['賽','ㄙㄞˋ']],[['比','ㄅㄧˇ'],['較','ㄐㄧㄠˋ']]]},
+    {yin:'ㄅㄧˋ', mean:'緊靠、挨在一起（較少用）。', words:[[['比','ㄅㄧˋ'],['鄰','ㄌㄧㄣˊ']]]},
+  ]},
+  {char:'勝', readings:[
+    {yin:'ㄕㄥˋ', mean:'贏、超過別人。', words:[[['勝','ㄕㄥˋ'],['利','ㄌㄧˋ']],[['勝','ㄕㄥˋ'],['過','ㄍㄨㄛˋ']]]},
+    {yin:'ㄕㄥ', mean:'能承擔、擔得起。', words:[[['勝','ㄕㄥ'],['任','ㄖㄣˋ']]]},
+  ]},
+];
+
+/* ====== 工具 ====== */
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function pick(a){return a[Math.floor(Math.random()*a.length)];}
+
+// 把詞渲染成帶注音的 HTML
+//  hideChar：要把注音遮成「？」的破音字（會遮住詞裡所有同一個字）
+//  revealChar：要把注音用綠色「揭曉」的字（連對後使用）
+//  一般顯示全部注音時，hideChar 傳 -1（數字，永遠不會等於任何國字）
+function rubyWord(pairs, hideChar, revealChar){
+  return pairs.map(p=>{
+    if(hideChar && p[0]===hideChar){
+      return '<ruby class="target">'+p[0]+'<rt class="q">？</rt></ruby>';
+    }
+    if(revealChar && p[0]===revealChar){
+      return '<ruby>'+p[0]+'<rt class="rv">'+p[1]+'</rt></ruby>';
+    }
+    return '<ruby>'+p[0]+'<rt>'+p[1]+'</rt></ruby>';
+  }).join('');
+}
+function wordText(pairs){return pairs.map(p=>p[0]).join('');}
+
+// 所有讀音的集合（做干擾選項用）
+const ALLYINS = [...new Set(DATA.flatMap(d=>d.readings.map(r=>r.yin)))];
+
+// 取得某字、答案以外的干擾注音
+function distractYins(char, ansYin, n){
+  let pool=[];
+  const cd=DATA.find(d=>d.char===char);
+  cd.readings.forEach(r=>{if(r.yin!==ansYin)pool.push(r.yin);});
+  shuffle(ALLYINS).forEach(y=>{if(y!==ansYin && !pool.includes(y))pool.push(y);});
+  return pool.slice(0,n);
+}
+
+// 鼓勵語
+const PRAISE=['答對了！你好棒 🎉','太厲害了！⭐','答對了，你是小天才 😍','正確！給你一個讚 👍','好棒喔！🌈'];
+const SOFT=['沒關係，再想想看 🤔','差一點點，再試一次 💪','再讀一次語詞，慢慢來 🐢','加油，你一定可以的 🌟'];
+
+/* ====== 分頁 ====== */
+const TABS=[
+  [['字','ㄗˋ'],['卡','ㄎㄚˇ'],['瀏','ㄌㄧㄡˊ'],['覽','ㄌㄢˇ']],
+  [['選','ㄒㄩㄢˇ'],['讀','ㄉㄨˊ'],['音','ㄧㄣ']],
+  [['讀','ㄉㄨˊ'],['音','ㄧㄣ'],['連','ㄌㄧㄢˊ'],['連','ㄌㄧㄢˊ'],['看','ㄎㄢˋ']],
+  [['考','ㄎㄠˇ'],['題','ㄊㄧˊ']],
+];
+function buildTabs(){
+  const box=document.getElementById('tabs');
+  box.innerHTML='';
+  TABS.forEach((t,i)=>{
+    const b=document.createElement('button');
+    b.className='tab t'+i+(i===0?'':' off');
+    b.textContent=t.map(p=>p[0]).join('');
+    b.onclick=()=>switchTab(i);
+    box.appendChild(b);
+  });
+}
+function switchTab(i){
+  document.querySelectorAll('.tab').forEach((b,k)=>b.classList.toggle('off',k!==i));
+  document.querySelectorAll('section').forEach((s,k)=>s.classList.toggle('active',k===i));
+  if(i===1)newYinGame();
+  if(i===2)newMatch();
+  if(i===3)buildWrite();
+}
+
+// 標題注音
+document.getElementById('title0').textContent='字卡瀏覽';
+document.getElementById('hint0').textContent='點一點黃色的注音按鈕，看看意思和造詞！';
+document.getElementById('title1').textContent='選讀音';
+document.getElementById('title2').textContent='讀音連連看';
+document.getElementById('title4').textContent='考題';
+
+/* ====== 1. 字卡瀏覽 ====== */
+function buildCards(){
+  const grid=document.getElementById('cardgrid');
+  grid.innerHTML='';
+  DATA.forEach(d=>{
+    const card=document.createElement('div');
+    card.className='card';
+    let html='<div class="bigchar">'+d.char+'</div>';
+    d.readings.forEach((r,ri)=>{
+      const id='det_'+d.char+'_'+ri;
+      html+='<button class="rbtn" data-t="'+id+'">'+r.yin+'</button>';
+      html+='<div class="detail" id="'+id+'"><div class="mean">'+r.mean+'</div>';
+      r.words.forEach(w=>{html+='<span class="chip">'+rubyWord(w,-1)+'</span>';});
+      html+='</div>';
+    });
+    card.innerHTML=html;
+    grid.appendChild(card);
+  });
+  grid.querySelectorAll('.rbtn').forEach(b=>{
+    b.onclick=()=>{document.getElementById(b.dataset.t).classList.toggle('show');};
+  });
+}
+
+/* ====== 2. 選讀音（無限練習）====== */
+function makeYinQuestion(){
+  const d=pick(DATA.filter(x=>x.readings.length>=2));
+  const r=pick(d.readings);
+  const w=pick(r.words);
+  let ti=w.findIndex(p=>p[0]===d.char);
+  if(ti<0)ti=0;
+  const opts=shuffle([r.yin,...distractYins(d.char,r.yin,2)]);
+  return {char:d.char,word:w,target:ti,answer:r.yin,opts};
+}
+let g1;
+function newYinGame(){
+  g1=makeYinQuestion();
+  document.getElementById('g1ask').textContent='下面畫線的字，在這裡念哪個音？';
+  document.getElementById('g1word').innerHTML=rubyWord(g1.word,g1.char);
+  const box=document.getElementById('g1opts');box.innerHTML='';
+  g1.opts.forEach(y=>{
+    const b=document.createElement('button');b.className='opt';b.textContent=y;
+    b.onclick=()=>answerYin(b,y);box.appendChild(b);
+  });
+  document.getElementById('g1fb').textContent='';
+  const nx=document.getElementById('g1next');
+  nx.textContent='下一題';
+  nx.style.visibility='hidden';
+  nx.onclick=newYinGame;
+}
+function answerYin(btn,y){
+  const fb=document.getElementById('g1fb');
+  if(y===g1.answer){
+    btn.classList.add('right');
+    fb.textContent=pick(PRAISE);fb.className='feedback center ok';
+    document.querySelectorAll('#g1opts .opt').forEach(b=>b.disabled=true);
+    document.getElementById('g1next').style.visibility='visible';
+  }else{
+    btn.classList.add('wrong');btn.disabled=true;
+    fb.textContent=pick(SOFT);fb.className='feedback center no';
+  }
+}
+
+/* ====== 3. 造詞配對 ====== */
+let g2sel=null,g2done=0,g2total=0,g2items=[];
+function g2svg(){return document.getElementById('g2lines');}
+function g2wrap(){return document.querySelector('#sec2 .matchwrap');}
+// 算出按鈕內側（左欄取右緣、右欄取左緣）中點，座標相對於 matchwrap
+function g2pt(btn,isRight){
+  const w=g2wrap().getBoundingClientRect();const r=btn.getBoundingClientRect();
+  return {x:(isRight? r.left : r.right)-w.left, y:r.top-w.top+r.height/2};
+}
+function g2drawLine(p1,p2,cls){
+  const l=document.createElementNS('http://www.w3.org/2000/svg','line');
+  l.setAttribute('x1',p1.x);l.setAttribute('y1',p1.y);
+  l.setAttribute('x2',p2.x);l.setAttribute('y2',p2.y);
+  l.setAttribute('class',cls);g2svg().appendChild(l);return l;
+}
+// 視窗縮放時重畫已連好的線
+function g2redraw(){
+  const s=g2svg();[...s.querySelectorAll('.matchline')].forEach(n=>n.remove());
+  g2items.forEach((it,k)=>{
+    if(!it.matched)return;
+    const lb=document.querySelector('#g2left .mbtn[data-k="'+k+'"]');
+    const rb=document.querySelector('#g2right .mbtn[data-k="'+k+'"]');
+    if(lb&&rb)g2drawLine(g2pt(lb,false),g2pt(rb,true),'matchline');
+  });
+}
+function newMatch(){
+  // 取 3 組（讀音 -> 詞），讀音不重複
+  const pool=[];
+  DATA.forEach(d=>d.readings.forEach(r=>{
+    pool.push({yin:r.yin, word:pick(r.words), char:d.char});
+  }));
+  const chosen=[];
+  shuffle(pool).forEach(p=>{if(chosen.length<3 && !chosen.some(c=>c.yin===p.yin))chosen.push(p);});
+  g2items=chosen.map(c=>({yin:c.yin,word:c.word,char:c.char,matched:false}));
+  g2total=g2items.length;g2done=0;g2sel=null;
+  g2svg().innerHTML='';
+  document.getElementById('g2ask').textContent='把左邊的讀音，連到右邊正確的語詞。';
+  document.getElementById('g2lh').textContent='讀音';
+  document.getElementById('g2rh').textContent='語詞';
+  const L=document.getElementById('g2left');L.innerHTML='';
+  const R=document.getElementById('g2right');R.innerHTML='';
+  g2items.forEach((it,i)=>{
+    const lb=document.createElement('button');lb.className='mbtn y';lb.textContent=it.yin;
+    lb.dataset.k=i;lb.onclick=()=>selLeft(lb);L.appendChild(lb);
+  });
+  // 右欄打散順序；把破音字的注音遮成「？」
+  shuffle(g2items.map((it,i)=>i)).forEach(i=>{
+    const it=g2items[i];
+    const rb=document.createElement('button');rb.className='mbtn w';
+    rb.innerHTML=rubyWord(it.word,it.char);rb.dataset.k=i;
+    rb.onclick=()=>selRight(rb);R.appendChild(rb);
+  });
+  document.getElementById('g2fb').textContent='';
+  const nb=document.getElementById('g2new');
+  nb.textContent='下一題';
+  nb.onclick=newMatch;
+}
+function selLeft(btn){
+  if(btn.classList.contains('done'))return;
+  document.querySelectorAll('#g2left .mbtn').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');g2sel=btn;
+}
+function selRight(btn){
+  if(btn.classList.contains('done'))return;
+  const fb=document.getElementById('g2fb');
+  if(!g2sel){fb.textContent='先點左邊的讀音，再點這裡喔 👈';fb.className='feedback center no';return;}
+  const k=+btn.dataset.k;
+  if(btn.dataset.k===g2sel.dataset.k){
+    const it=g2items[k];it.matched=true;
+    btn.innerHTML=rubyWord(it.word,-1,it.char); // 連對了→注音用綠色揭曉
+    g2drawLine(g2pt(g2sel,false),g2pt(btn,true),'matchline');
+    g2sel.classList.remove('sel');g2sel.classList.add('done');btn.classList.add('done');
+    g2sel=null;g2done++;
+    if(g2done===g2total){fb.textContent='全部連對了！你太棒了 🎉🎉';fb.className='feedback center ok';}
+    else{fb.textContent=pick(PRAISE);fb.className='feedback center ok';}
+  }else{
+    const tmp=g2drawLine(g2pt(g2sel,false),g2pt(btn,true),'matchline wrong');
+    setTimeout(()=>tmp.remove(),600);
+    fb.textContent=pick(SOFT);fb.className='feedback center no';
+  }
+}
+window.addEventListener('resize',()=>{
+  if(document.getElementById('sec2').classList.contains('active'))g2redraw();
+});
+
+/* ====== 4. 考題（出字 → 寫讀音 + 為每個讀音造詞） ====== */
+// 把注音標準化，方便比對（輕聲點移到最前，去掉空白）
+function canonZhu(s){
+  s=(s||'').replace(/\s/g,'');
+  const light=s.includes('˙');
+  s=s.replace(/˙/g,'');
+  return (light?'˙':'')+s;
+}
+const KEY_INITIAL=['ㄅ','ㄆ','ㄇ','ㄈ','ㄉ','ㄊ','ㄋ','ㄌ','ㄍ','ㄎ','ㄏ','ㄐ','ㄑ','ㄒ','ㄓ','ㄔ','ㄕ','ㄖ','ㄗ','ㄘ','ㄙ'];
+const KEY_FINAL=['ㄧ','ㄨ','ㄩ','ㄚ','ㄛ','ㄜ','ㄝ','ㄞ','ㄟ','ㄠ','ㄡ','ㄢ','ㄣ','ㄤ','ㄥ','ㄦ'];
+const KEY_TONE=['ˊ','ˇ','ˋ','˙'];
+
+let g5char=null, g5zhu=[], g5active=0, g5checked=false;
+
+function zhuPH(i){return g5zhu[i]? g5zhu[i] : '<span class="ph">👆 點我，用下面的注音鍵盤拼</span>';}
+function escHtml(s){return (s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+
+function buildWrite(){
+  g5char=pick(DATA);
+  g5zhu=g5char.readings.map(()=>'');
+  g5active=0;g5checked=false;
+  document.getElementById('g5tip').innerHTML=
+    '考考你！上面這個字有 <b style="color:#e8420c;">'+g5char.readings.length+'</b> 個讀音。'+
+    '點「注音」框用注音鍵盤拼讀音；再在「造詞」框，<b>自己想一個</b>用這個音的詞 ✏️';
+  document.getElementById('g5char').textContent=g5char.char;
+  renderSlots();
+  moveKeypad();
+  const fb=document.getElementById('g5fb');fb.textContent='';
+  const ans=document.getElementById('g5ans');ans.className='answerbox';ans.innerHTML='';
+  const ck=document.getElementById('g5check');
+  ck.textContent='看答案';
+  ck.onclick=checkWrite;
+  const nb=document.getElementById('g5new');
+  nb.textContent='下一題';
+  nb.onclick=buildWrite;
+}
+function renderSlots(){
+  const box=document.getElementById('g5slots');box.innerHTML='';
+  g5char.readings.forEach((r,i)=>{
+    const card=document.createElement('div');card.className='slotcard';
+    card.innerHTML=
+      '<div class="lab">第 '+(i+1)+' 個讀音</div>'+
+      '<div class="frow"><span class="flab">注音</span>'+
+        '<div class="ibox zhubox" data-i="'+i+'">'+zhuPH(i)+'</div></div>'+
+      '<div class="kpslot" data-kp="'+i+'"></div>'+
+      '<div class="frow"><span class="flab">造詞</span>'+
+        '<input class="winput" id="g5wi'+i+'" type="text" autocomplete="off"></div>';
+    box.appendChild(card);
+  });
+  box.querySelectorAll('.zhubox').forEach(z=>{
+    z.onclick=()=>{ g5active=+z.dataset.i; moveKeypad(); };
+  });
+}
+// 把注音鍵盤移到目前作答的讀音底下；造詞是自由作答，讓小朋友自己思考造詞
+function moveKeypad(){
+  const slot=document.querySelector('#g5slots .kpslot[data-kp="'+g5active+'"]');
+  const kp=document.getElementById('g5kp');
+  if(slot&&kp) slot.appendChild(kp);
+  buildKeypad();
+  document.querySelectorAll('#g5slots .zhubox').forEach(z=>z.classList.toggle('active',+z.dataset.i===g5active));
+}
+function refreshZhuBox(i){
+  const z=document.querySelector('#g5slots .zhubox[data-i="'+i+'"]');
+  if(z) z.innerHTML=zhuPH(i);
+}
+function buildKeypad(){
+  const box=document.getElementById('g5keys');if(!box)return;box.innerHTML='';
+  const add=(sym,cls)=>{const b=document.createElement('button');b.className='key'+(cls?' '+cls:'');
+    b.textContent=sym;b.onclick=()=>{g5zhu[g5active]=(g5zhu[g5active]||'')+sym;refreshZhuBox(g5active);};box.appendChild(b);};
+  KEY_INITIAL.forEach(s=>add(s));
+  KEY_FINAL.forEach(s=>add(s));
+  KEY_TONE.forEach(s=>add(s,'tone'));
+  const del=document.createElement('button');del.className='key fn';del.textContent='⌫ 刪除';
+  del.onclick=()=>{g5zhu[g5active]=(g5zhu[g5active]||'').slice(0,-1);refreshZhuBox(g5active);};box.appendChild(del);
+  const clr=document.createElement('button');clr.className='key fn';clr.textContent='✕ 清空';
+  clr.onclick=()=>{g5zhu[g5active]='';refreshZhuBox(g5active);};box.appendChild(clr);
+  const hint=document.getElementById('g5kphint');
+  if(hint) hint.innerHTML='<span class="kpchar">'+g5char.char+'</span>👇 點注音，拼出這個讀音';
+}
+function checkWrite(){
+  const answers=g5char.readings.map(r=>canonZhu(r.yin));
+  const used=g5char.readings.map(()=>false);
+  let correct=0;
+  g5zhu.forEach(z=>{
+    const c=canonZhu(z);
+    if(!c)return;
+    const idx=answers.findIndex((a,k)=>a===c && !used[k]);
+    if(idx>=0){used[idx]=true;correct++;}
+  });
+  // 造詞：讀各框小朋友自己打的詞；電腦依內建（教育部）用詞資料自動判斷對錯
+  const words=g5char.readings.map((r,i)=>{const el=document.getElementById('g5wi'+i);return el?el.value.trim():'';});
+  const wordOK=g5char.readings.map((r,i)=>{const w=words[i];if(!w)return null;return r.words.some(ww=>wordText(ww)===w);});
+  const n=g5char.readings.length;
+  const allWord=wordOK.every(x=>x===true);
+  const fb=document.getElementById('g5fb');
+  if(correct===n && allWord){fb.textContent='讀音和造詞全對！你好厲害 🎉';fb.className='feedback center ok';}
+  else if(correct>0||wordOK.some(x=>x===true)){fb.textContent='答對了一些，看看下面訂正一下 😊';fb.className='feedback center ok';}
+  else{fb.textContent='沒關係，看看下面的正確答案，再試一次 🌟';fb.className='feedback center no';}
+  // 顯示答案
+  const ans=document.getElementById('g5ans');
+  let html='<h3>✅ 正確答案（'+g5char.char+'）</h3>';
+  g5char.readings.forEach((r,i)=>{
+    html+='<div class="ansrow"><div class="yin">'+r.yin+(used[i]?' <span class="tick">✔ 讀音對</span>':'')+'</div>';
+    html+='<div style="font-size:15px;color:#555;margin:2px 0 4px;">'+r.mean+'</div>';
+    const w=words[i];
+    if(wordOK[i]===true){
+      html+='<div style="font-size:15px;margin:2px 0 4px;">你造的詞：<b>'+escHtml(w)+'</b> <span class="tick">✔ 答對了</span></div>';
+    }else{
+      html+='<div style="font-size:15px;margin:2px 0 4px;">'+
+        (w?'你造的詞：<b>'+escHtml(w)+'</b>　':'')+
+        '正確的詞：<span class="chip">'+rubyWord(r.words[0],-1)+'</span></div>';
+    }
+    html+='</div>';
+  });
+  ans.innerHTML=html;ans.className='answerbox show';
+  ans.scrollIntoView({behavior:'smooth',block:'center'});
+  g5checked=true;
+}
+
+/* ====== 啟動 ====== */
+buildTabs();
+buildCards();
+newYinGame();
+</script>
+</body>
+</html>
